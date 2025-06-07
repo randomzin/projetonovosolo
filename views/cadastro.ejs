@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cadastro de Reservas</title>
+  <style>
+    /* Reset básico */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    main {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-weight: 700;
+      color: #333;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    nav {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #4caf50;
+      font-weight: 600;
+      margin: 0 12px;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #388e3c;
+      text-decoration: underline;
+    }
+
+    form input[type="text"] {
+      width: 100%;
+      padding: 14px 15px;
+      margin-bottom: 20px;
+      border: 1.8px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    form input[type="text"]:focus {
+      border-color: #4caf50;
+      outline: none;
+      box-shadow: 0 0 5px #4caf50;
+    }
+
+    form button {
+      width: 100%;
+      padding: 14px;
+      background-color: #4caf50;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    form button:hover {
+      background-color: #43a047;
+    }
+
+    /* Responsividade */
+    @media (max-width: 450px) {
+      main {
+        padding: 20px;
+        margin: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h2>Área protegida - Criar reserva</h2>
+    <p>Usuário logado: <%= nome_usuario %></p>
+    <nav>
+      <a href="/reservas">Ver reservas</a>
+      <a href="/logout">Sair</a>
+    </nav>
+
+    <form action="/cadastro" method="POST" autocomplete="off" novalidate>
+      <input type="text" name="livro_reservado" placeholder="Nome do livro" required />
+      <button type="submit">Reservar</button>
+    </form>
+  </main>
+</body>
+</html>

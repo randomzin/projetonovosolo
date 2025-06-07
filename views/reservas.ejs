@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reservas</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #eef; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { padding: 12px; border: 1px solid #ccc; text-align: left; }
+    h2 { text-align: center; }
+  </style>
+</head>
+<body>
+  <h2>Reservas de Livros</h2>
+  <table>
+    <thead>
+      <tr><th>Nome</th><th>Livro</th><th>Data</th></tr>
+    </thead>
+    <tbody>
+      <% reservas.forEach(r => { %>
+        <tr>
+          <td><%= r.nome_usuario %></td>
+          <td><%= r.livro_reservado %></td>
+          <td><%= new Date(r.data_reserva).toLocaleDateString() %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>

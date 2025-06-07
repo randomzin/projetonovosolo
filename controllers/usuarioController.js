@@ -1,41 +1,71 @@
-const UsuarioService = require("../services/usuarioService");
+const supabase = require("../config/db");
+const bcrypt = require("bcrypt");
 
-const UsuarioController = {
-  async criar(req, res) {
-    try {
-      const { nome, email, senha, criado_em } = req.body;
-      const usuario = await UsuarioService.criar(nome, email, senha, criado_em);
-      res.status(201).json(usuario);
-    } catch (error) {
-      res.status(500).json({ erro: error.message });
-    }
-  },
-
-  async listar(req, res) {
-    const usuarios = await UsuarioService.listar();
-    res.json(usuarios);
-  },
-
-  async buscar(req, res) {
-    const usuario = await UsuarioService.buscarPorId(req.params.id);
-    usuario ? res.json(usuario) : res.status(404).send();
-  },
-
-  async atualizar(req, res) {
-    const { nome, email, senha } = req.body;
-    const usuario = await UsuarioService.atualizar(
-      req.params.id,
-      nome,
-      email,
-      senha
-    );
-    res.json(usuario);
-  },
-
-  async deletar(req, res) {
-    const sucesso = await UsuarioService.deletar(req.params.id);
-    res.status(sucesso ? 204 : 404).send();
-  },
+exports.mostrarLogin = (req, res) => {
+  res.render("login"); // renderiza login.ejs
 };
 
-module.exports = UsuarioController;
+exports.mostrarCadastro = (req, res) => {
+  res.render("registrar"); // renderiza registrar.ejs
+};
+
+exports.cadastrarUsuario = async (req, res) => {
+  const { nome_usuario, senha } = req.body;
+
+  // Verifica se usuário já existe
+  const { data: userExists, error } = await supabase
+    .from("usuarios")
+    .select("nome_usuario")
+    .eq("nome_usuario", nome_usuario)
+    .single();
+
+  if (userExists) {
+    return res.send("Usuário já existe. Tente outro nome.");
+  }
+
+  // Hashear senha
+  const senha_hash = await bcrypt.hash(senha, 10);
+
+  // Inserir usuário no banco
+  const { error: insertError } = await supabase
+    .from("usuarios")
+    .insert([{ nome_usuario, senha: senha_hash }]);
+
+  if (insertError) {
+    return res.send("Erro ao registrar usuário.");
+  }
+
+  // Redireciona para login após cadastro
+  res.redirect("/");
+};
+
+exports.realizarLogin = async (req, res) => {
+  const { nome_usuario, senha } = req.body;
+
+  // Busca usuário no banco
+  const { data: user, error } = await supabase
+    .from("usuarios")
+    .select("*")
+    .eq("nome_usuario", nome_usuario)
+    .single();
+
+  if (!user) {
+    return res.send("Usuário ou senha inválidos.");
+  }
+
+  // Verifica senha
+  const senhaValida = await bcrypt.compare(senha, user.senha);
+  if (!senhaValida) {
+    return res.send("Usuário ou senha inválidos.");
+  }
+
+  // Cria sessão
+  req.session.nome_usuario = nome_usuario;
+  res.redirect("/cadastro"); // página protegida após login
+};
+
+exports.logout = (req, res) => {
+  req.session.destroy(() => {
+    res.redirect("/");
+  });
+};

@@ -1,19 +1,24 @@
-// server.js
 const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const routes = require("./routes");
+const path = require("path");
+const session = require("express-session");
 
 const app = express();
-const port = 3000;
 
-// Middlewares
-app.use(cors());
-app.use(bodyParser.json());
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-// Usando as rotas definidas
-app.use("/api", routes);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
 
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
+app.use(session({
+  secret: "livros123",
+  resave: false,
+  saveUninitialized: true
+}));
+
+const rotas = require("./routes/index");
+app.use("/", rotas);
+
+app.listen(3000, () => {
+  console.log("Servidor rodando em http://localhost:3000");
 });
